@@ -1,0 +1,73 @@
+version: '3.4'
+
+services:
+  
+  db:
+    container_name: db
+    hostname: db
+    image: mysql:5.7
+    command: --lower-case-table-names=1
+    ports:
+      - 3306:3306
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./crushftp.mysql:/docker-entrypoint-initdb.d/crushftp.sql
+      # - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DBROOT}
+      MYSQL_DATABASE: ${DBDB}
+      MYSQL_USER: ${DBUSER}
+      MYSQL_PASSWORD: ${DBPASSWORD}
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", 'mysqladmin ping']
+      interval: 30s
+      timeout: 2s
+      retries: 3
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    hostname: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8081:80
+    environment:
+      PMA_HOST: ${DBHOST}
+      MYSQL_ROOT_PASSWORD: ${DBROOT}
+    restart: always
+
+  crushftp:
+    container_name: crushftp
+    hostname: crushftp
+    image: snoophogg/crushftp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      # - 9090:9090
+      - 8080:8080
+      # - 8888:8888
+      # - 2222:2222
+      # - 22:2222
+    volumes:
+      - crushconfig:/var/opt/CrushFTP9
+      - crushshare:/share
+      # - ./Crush8BareMinimum.zip:/tmp/crushconfig.zip:ro
+      # - ./prefs_copied.XML:/tmp/prefs.XML:ro
+    environment:
+      MYSQL_HOST: ${DBHOST}
+      MYSQL_PORT: ${DBPORT}
+      MYSQL_DATABASE: ${DBDB}
+      MYSQL_USER: ${DBUSER}
+      MYSQL_PASSWORD: ${DBPASSWORD}
+      CRUSH_ADMIN_USER: ${CRUSHUSER}
+      CRUSH_ADMIN_PROTOCOL: ${CRUSHPROTOCOL}
+      CRUSH_ADMIN_PORT: ${CRUSHPORT}
+      CRUSH_ADMIN_PASSWORD: ${CRUSHPASS}
+      CONNECT: 1
+    restart: always
+
+volumes:
+  crushconfig: {}
+  crushshare: {}
+  db_data: {}

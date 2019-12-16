@@ -1,0 +1,173 @@
+#/* script for mysql to make the db tables needed for crushftp. */
+
+# http://www.crushftp.com/crush8wiki/wiki.jsp?page=mysql
+
+
+# dump of table domain_root_list
+# ------------------------------------------------------------
+
+create table `domain_root_list` (
+  `userid` int(11) not null default '0',
+  `domain` varchar(255) default null,
+  `path` varchar(255) default null,
+  `sort_order` int(11) default null
+) engine=myisam default charset=latin1;
+
+
+
+# dump of table events5
+# ------------------------------------------------------------
+
+create table `events5` (
+  `userid` int(11) not null default '0',
+  `event_name` varchar(255) not null default '',
+  `prop_name` varchar(255) not null default '',
+  `prop_value` text not null
+) engine=myisam default charset=latin1;
+
+
+
+# dump of table inheritance
+# ------------------------------------------------------------
+
+create table `inheritance` (
+  `userid` int(11) default null,
+  `inherit_username` varchar(255) default null,
+  `sort_order` int(11) default null,
+  `server_group` varchar(50) default null
+) engine=myisam default charset=latin1;
+
+
+
+# dump of table ip_restrictions
+# ------------------------------------------------------------
+
+create table `ip_restrictions` (
+  `userid` int(11) not null default '0',
+  `start_ip` varchar(255) default null,
+  `type` varchar(1) default null,
+  `stop_ip` varchar(255) default null,
+  `sort_order` int(11) default null
+) engine=myisam default charset=latin1;
+
+
+
+# dump of table user_properties
+# ------------------------------------------------------------
+
+create table `user_properties` (
+  `userid` int(11) default null,
+  `prop_name` varchar(255) default null,
+  `prop_value` varchar(2000) default null
+) engine=myisam default charset=latin1;
+
+
+
+# dump of table users
+# ------------------------------------------------------------
+
+create table `users` (
+  `userid` int(11) not null auto_increment,
+  `username` varchar(255) default null,
+  `password` varchar(255) default null,
+  `server_group` varchar(50) default null,
+  primary key  (`userid`)
+) engine=myisam auto_increment=8 default charset=latin1;
+
+
+
+# dump of table vfs
+# ------------------------------------------------------------
+
+create table `vfs` (
+  `userid` int(11) default null,
+  `url` varchar(255) default null,
+  `type` varchar(50) default null,
+  `path` varchar(255) default null,
+  `sort_order` int(11) default null
+) engine=myisam default charset=latin1;
+
+
+
+# dump of table vfs_permissions
+# ------------------------------------------------------------
+
+create table `vfs_permissions` (
+  `userid` int(11) default null,
+  `path` varchar(255) default null,
+  `privs` varchar(255) default null
+) engine=myisam default charset=latin1;
+
+
+
+# dump of table web_buttons
+# ------------------------------------------------------------
+
+create table `web_buttons` (
+  `userid` int(11) not null default '0',
+  `sql_field_key` varchar(255) default null,
+  `sql_field_value` varchar(255) default null,
+  `for_menu` varchar(10) default null,
+  `for_context_menu` varchar(10) default null,
+  `sort_order` int(11) default null
+) engine=myisam default charset=latin1;
+
+
+
+# dump of table web_customizations
+# ------------------------------------------------------------
+
+create table `web_customizations` (
+  `userid` int(11) not null default '0',
+  `sql_field_key` varchar(255) default null,
+  `sql_field_value` varchar(255) default null,
+  `sort_order` int(11) default null
+) engine=myisam default charset=latin1;
+
+
+
+# dump of table groups
+# ------------------------------------------------------------
+
+create table `groups` (
+  `groupname` varchar(255) default null,
+  `userid` int(11) default null,
+  `server_group` varchar(50) default null
+) engine=myisam default charset=latin1;
+
+
+
+# dump of table modified_times
+# ------------------------------------------------------------
+create table `modified_times` (
+  `server_group` varchar(50),
+  `prop_name` varchar(255),
+  `prop_value` varchar(255) default null,
+  unique (`server_group`,`prop_name`)
+) engine=myisam default charset=latin1;
+
+
+# dump of table vfs_properties.  new in v6.4
+# ------------------------------------------------------------
+create table `vfs_properties` (
+  `userid` int(11) default null,
+  `path` varchar(1024) default null,
+  `prop_name` varchar(255) default null,
+  `prop_value` varchar(2000) default null
+) engine=myisam default charset=latin1;
+
+CREATE TABLE `CRUSHFTP_LOG` (
+    LOG_ROW_NUM DOUBLE NOT NULL PRIMARY KEY,
+    LOG_MILLIS DOUBLE NOT NULL,
+    LOG_TAG VARCHAR(50) DEFAULT NULL,
+    LOG_DATA VARCHAR(2000) DEFAULT NULL);
+
+CREATE TABLE META_INFO(RID DOUBLE NOT NULL PRIMARY KEY,SESSION_RID DOUBLE NOT NULL,TRANSFER_RID DOUBLE NOT NULL,ITEM_KEY VARCHAR(100) DEFAULT NULL,ITEM_VALUE VARCHAR(2000) DEFAULT NULL);
+
+CREATE TABLE SESSIONS(RID DOUBLE NOT NULL PRIMARY KEY,SESSION VARCHAR(100) DEFAULT NULL,SERVER_GROUP VARCHAR(50) DEFAULT NULL,USER_NAME VARCHAR(100) DEFAULT NULL,START_TIME DATETIME DEFAULT NULL,END_TIME DATETIME DEFAULT NULL,SUCCESS_LOGIN VARCHAR(10) DEFAULT NULL,IP VARCHAR(50) DEFAULT NULL);
+
+CREATE TABLE TRANSFERS(RID DOUBLE NOT NULL PRIMARY KEY,SESSION_RID DOUBLE NOT NULL,START_TIME DATETIME DEFAULT NULL,DIRECTION VARCHAR(8) DEFAULT NULL,PATH VARCHAR(255) DEFAULT NULL,FILE_NAME VARCHAR(2000) DEFAULT NULL,URL VARCHAR(2000) DEFAULT NULL,SPEED INTEGER DEFAULT NULL,TRANSFER_SIZE DOUBLE DEFAULT NULL,IGNORE_SIZE VARCHAR(1) DEFAULT NULL);
+
+ALTER TABLE `TRANSFERS` ADD INDEX  (`SESSION_RID`,`TRANSFER_SIZE`,`DIRECTION`,`IGNORE_SIZE`,`START_TIME`);
+
+CREATE TABLE FILE_JOURNAL(RID DOUBLE NOT NULL PRIMARY KEY,SYNC_ID VARCHAR(255) NOT NULL,ITEM_PATH VARCHAR(2000) NOT NULL, EVENT_TYPE VARCHAR(20) NOT NULL,EVENT_TIME TIMESTAMP NOT NULL,CLIENTID VARCHAR(20) NOT NULL, PRIOR_MD5 VARCHAR(50) NOT NULL);
