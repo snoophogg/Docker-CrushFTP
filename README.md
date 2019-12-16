@@ -22,7 +22,7 @@ This container, itself, is distributed under the [MIT Licence](LICENSE).
 
 ## MySQL
 
-If you set environment variable CONNECT to 1 then this container will try to setup and connect to a MySQL server for user config and logging.
+If you set environment variable `CONNECT` to `1` then this container will try to setup and connect to a MySQL server for user config and logging.
 
 See docker-compose.yml for example.
 

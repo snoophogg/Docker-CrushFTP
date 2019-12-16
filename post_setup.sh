@@ -19,7 +19,7 @@ TryCurl () {
   # echo "${args[@]}"
   local -i fails=0
   touch /tmp/curl.out
-  while [ $(curl "${args[@]}") -ne "200" ]; do 
+  while [ $(curl "${args[@]}" -H 'Connection: close') -ne "200" ]; do 
     fails=$((fails+1))
     echo "Failed"
     if [[ $fails -gt 5 ]]; then
