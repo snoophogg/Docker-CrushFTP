@@ -1,7 +1,8 @@
 FROM snoophogg/ubuntujava
 
-ADD https://www.crushftp.com/early9/CrushFTP9.zip /tmp/CrushFTP9.zip
+# ADD https://www.crushftp.com/early9/CrushFTP9.zip /tmp/CrushFTP9.zip
 # COPY ./CrushFTP9_NoJava.zip /tmp/CrushFTP9.zip
+
 COPY ./post_setup.sh /tmp/post_setup.sh
 COPY ./crushftp_init.sh /var/opt/run-crushftp.sh
 COPY ./setup.sh /var/opt/setup.sh
@@ -9,6 +10,8 @@ COPY ./setup.sh /var/opt/setup.sh
 RUN chmod +x /tmp/post_setup.sh
 RUN chmod +x /var/opt/setup.sh
 RUN chmod +x /var/opt/run-crushftp.sh
+
+RUN curl -o /tmp/CrushFTP9.zip https://www.crushftp.com/early9/CrushFTP9.zip
 
 ENTRYPOINT [ "/bin/bash", "/var/opt/setup.sh" ]
 CMD ["-c"]
